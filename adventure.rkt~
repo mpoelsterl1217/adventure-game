@@ -208,7 +208,7 @@
 ;;;
 
 (define-struct (person thing)
-  (fullness))
+  ())
 
 ;; initialize-person: person -> void
 ;; EFFECT: do whatever initializations are necessary for persons.
@@ -264,39 +264,6 @@
 ;;; ADD YOUR TYPES HERE!
 ;;;
 
-(define-struct (food prop)
-  (calories for-human? needs-spoon? needs-knife?)
-  #:methods
-  (define (eat food-item eater)
-
-;;TO DO: Implement checking for spoon and knife in inventory
-;;To dol l ater
-    
-    (if (food-for-human? food-item )
-        (begin (destroy! food-item)
-               (set-person-fullness! eater
-                                    (+ (person-fullness eater) 1))
-               (if (< (person-fullness eater) 2)
-                   (printf "I'm still hungry!")
-                   (printf "I'm full!"))
-               )
-        )
-    )
-  )
-
-(define (new-food description examine-text location calories for-human? needs-spoon? needs-knife?)
-    (local [(define words (string->words description))
-          (define noun (last words))
-          (define adjectives (drop-right words 1))
-          (define food (make-food adjectives '() location noun examine-text calories for-human? needs-spoon? needs-knife?))]
-    (begin (initialize-thing! prop)
-           prop)))
-  
-               
-               
-               
-    
-   
 
 
 
