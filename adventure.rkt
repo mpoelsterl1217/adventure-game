@@ -250,20 +250,20 @@
                                      )
                (if (positive? (organism-hunger an-organism))
                    (printf "~A is still hungry.~%"
-                           (description an-organism)
+                           (noun an-organism)
                            )
                    (if (negative? (organism-hunger an-organism))
                        (printf "~A is full.~%"
-                               (description an-organism)
+                               (noun an-organism)
                                )
                        (printf "~A is satisfied.~%"
-                               (description an-organism)
+                               (noun an-organism)
                                )
                        )
                    )
                )
         (printf "~A cannot eat that.~%"
-                (description an-organism)
+                (noun an-organism)
                 )
         )
     )
@@ -271,7 +271,7 @@
   ;; output represents if the organism can eat the thing, helper to feed
   ;; parent method to be overrided by children
   (define (can-eat? an-organism a-thing)
-    #t
+    (food? a-thing)
     )
   )
 
@@ -290,6 +290,13 @@
             (container-contents p)
             )
     )
+  ;  (define (can-eat? an-org a-thing)
+  ;    (if (food? a-thing)
+  ;        (if ()
+  ;         
+  ;         )
+  ;        #f)
+  ;    )
   )
 
 ;; initialize-person: person -> void
@@ -299,14 +306,14 @@
 
 ;; new-person: string container -> person
 ;; Makes a new person object and initializes it.
-(define (new-person adjectives location)
+(define (new-person adjectives location pronoun)
   (local [(define person
             (make-person (string->words adjectives)
                          '()
                          location
-                         "I" ;; NOTE: Change 
-                         "a person" ;; NOTE: change
-                         2
+                         pronoun
+                         "It's a person"
+                         (random 5) ;; Sets hunger to a random natural number in [0,5)
                          (make-container "outfit" '())
                          ))]
     (begin (initialize-person! person)
@@ -557,7 +564,7 @@
 (define (start-game)
   ;; Fill this in with the rooms you want
   (local [(define starting-room (new-room ""))]
-    (begin (set! me (new-person "" starting-room))
+    (begin (set! me (new-person "" starting-room "I"))
            ;; Add join commands to connect your rooms with doors
 
            ;; Add code here to add things to your rooms
