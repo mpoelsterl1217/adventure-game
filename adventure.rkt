@@ -341,12 +341,29 @@
   ;; Takes off a clothing item 
   ;; EFFECT: updates 
   (define (doff item)
-    (move! item (here))
+    (if (member item
+                (my-outfit)
+                )
+        (move! item (here))
+        (printf "You aren't wearing ~A.~%"
+                (description item)
+                )
+     )
+    ;;(move! item (here))
     )
   )
 
 ;; new-clothing
-
+(define (new-clothing description examine-text location type warmth)
+  (local [(define words (string->words description))
+          (define noun (last words))
+          (define adjectives (drop-right words 1))
+          (define item (make-clothing adjectives '() location noun examine-text type warmth))]
+    (begin (initialize-thing! item)
+           item
+      )
+    )
+  )
 
 
 
@@ -439,9 +456,6 @@
 ;;; THE GAME WORLD - FILL ME IN
 ;;;
 
-
-(define hat (make-clothing '("hatlike") '() empty "hat" "test hat" 'hat 10))
-
 ;; start-game: -> void
 ;; Recreate the player object and all the rooms and things.
 (define (start-game)
@@ -451,8 +465,9 @@
            ;; Add join commands to connect your rooms with doors
 
            ;; Add code here to add things to your rooms
-           (set-thing-location! hat starting-room)
-           (initialize-thing! hat)
+           (new-clothing "red shirt" "It's an old red shirt, seems thins" starting-room 'shirt 0)
+           (new-clothing "brown sweater" "It's giving dark academia" starting-room 'shirt 20)
+           (new-clothing "jeans" "just some regular jeans" starting-room 'pants 10)
            
            (check-containers!)
            (void))))
