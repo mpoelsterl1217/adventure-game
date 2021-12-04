@@ -212,6 +212,12 @@
    ;; outfit: a container that holds all clothes a person is wearing
    outfit
    )
+  #:methods
+  (define (container-accessible-contents p)
+    (append (container-accessible-contents (person-outfit p))
+            (container-contents p)
+     )
+    )
   )
 
 ;; initialize-person: person -> void
@@ -335,7 +341,7 @@
   ;; Takes off a clothing item 
   ;; EFFECT: updates 
   (define (doff item)
-    "fill me in"
+    (move! item (here))
     )
   )
 
