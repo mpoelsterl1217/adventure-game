@@ -246,7 +246,9 @@
     (if (can-eat? an-organism a-thing)
         (begin (destroy! a-thing)
                (set-organism-hunger! an-organism
-                                     (- (organism-hunger an-organism) 1)
+                                     (- (organism-hunger an-organism)
+                                        (food-fillingness a-thing)
+                                        )
                                      )
                (if (positive? (organism-hunger an-organism))
                    (printf "~A is still hungry.~%"
@@ -290,13 +292,14 @@
             (container-contents p)
             )
     )
-  ;  (define (can-eat? an-org a-thing)
-  ;    (if (food? a-thing)
-  ;        (if ()
-  ;         
-  ;         )
-  ;        #f)
-  ;    )
+  (define (can-eat? an-org a-thing)
+    (if (food? a-thing)
+        (if (food-for-human? a-thing)
+            #t
+            #f ;;placeholders for before implementing utensil checks
+            )
+        #f)
+    )
   )
 
 ;; initialize-person: person -> void
@@ -329,31 +332,14 @@
 ;;;
 
 (define-struct (food prop)
-  (calories for-human? needs-spoon? needs-knife?)
-  #|  #:methods
-  (define (eat food-item eater)
-    "fill me in"
-    ;;TO DO: Implement checking for spoon and knife in inventory
-    ;;To dol l ater
-    
-    (if (food-for-human? food-item )
-        (begin (destroy! food-item)
-               (set-person-fullness! eater
-                                    (+ (person-fullness eater) 1))
-               (if (< (person-fullness eater) 2)
-                   (printf "I'm still hungry!")
-                   (printf "I'm full!"))
-               )
-        )
-    )
-|#
+  (fillingness for-human? needs-spoon? needs-knife?)
   )
 
-(define (new-food description examine-text location calories for-human? needs-spoon? needs-knife?)
+(define (new-food description examine-text location fillingness for-human? needs-spoon? needs-knife?)
   (local [(define words (string->words description))
           (define noun (last words))
           (define adjectives (drop-right words 1))
-          (define food (make-food adjectives '() location noun examine-text calories for-human? needs-spoon? needs-knife?))]
+          (define food (make-food adjectives '() location noun examine-text fillingness for-human? needs-spoon? needs-knife?))]
     (begin (initialize-thing! food)
            food)))
   
@@ -555,6 +541,10 @@
 (define-user-command (don clothing-item)
   "Puts on the clothing-item, unless you are already wearing something there")
 
+(define (eat a-thing)
+  (feed me a-thing)
+  )
+
 ;;;
 ;;; THE GAME WORLD - FILL ME IN
 ;;;
@@ -568,11 +558,6 @@
            ;; Add join commands to connect your rooms with doors
 
            ;; Add code here to add things to your rooms
-           (new-clothing "red shirt" "It's an old red shirt, seems thins" starting-room 'shirt 0)
-           (new-clothing "brown sweater" "It's giving dark academia" starting-room 'shirt 20)
-           (new-clothing "jeans" "just some regular jeans" starting-room 'pants 10)
-
-           (new-animal "black fluffy cat" "it's a spooky cat" starting-room)
            
            (check-containers!)
            (void))))
