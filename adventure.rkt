@@ -203,46 +203,6 @@
            (void))))
 
 ;;;
-;;; PERSON
-;;; A character in the game.  The player character is a person.
-;;;
-
-(define-struct (person thing)
-  (fullness
-   ;; outfit: a container that holds all clothes a person is wearing
-   outfit
-   )
-  #:methods
-  (define (container-accessible-contents p)
-    (append (container-accessible-contents (person-outfit p))
-            (container-contents p)
-     )
-    )
-  )
-
-;; initialize-person: person -> void
-;; EFFECT: do whatever initializations are necessary for persons.
-(define (initialize-person! p)
-  (initialize-thing! p))
-
-;; new-person: string container -> person
-;; Makes a new person object and initializes it.
-(define (new-person adjectives location)
-  (local [(define person
-            (make-person (string->words adjectives)
-                         '()
-                         location
-                         0
-                         (make-container "outfit" '())
-                         ))]
-    (begin (initialize-person! person)
-           person)))
-
-;; This is the global variable that holds the person object representing
-;; the player.  This gets reset by (start-game)
-(define me empty)
-
-;;;
 ;;; PROP
 ;;; A thing in the game that doesn't serve any purpose other than to be there.
 ;;;
@@ -274,17 +234,101 @@
            prop)))
 
 ;;;
+;;; Organism
+;;; A type for all living things in the game, handles eating
+;;;
+(define-struct (organism prop)
+  (hunger)
+  #:methods
+  ;; feed: organism thing -> void
+  ;; checks if organism can eat the thing, if so then it is removed and fullness of organism is updated
+  (define (feed an-organism a-thing)
+    (if (can-eat? an-organism a-thing)
+        (begin (destroy! a-thing)
+               (set-organism-hunger! an-organism
+                                     (- (organism-hunger an-organism) 1)
+                                     )
+               (if (positive? (organism-hunger an-organism))
+                   (printf "~A is still hungry.~%"
+                           (description an-organism)
+                           )
+                   (if (negative? (organism-hunger an-organism))
+                       (printf "~A is full.~%"
+                               (description an-organism)
+                               )
+                       (printf "~A is satisfied.~%"
+                               (description an-organism)
+                               )
+                       )
+                   )
+               )
+        (printf "~A cannot eat that.~%"
+                (description an-organism)
+                )
+        )
+    )
+  ;; can-eat?: organism thing -> boolean
+  ;; output represents if the organism can eat the thing, helper to feed
+  ;; parent method to be overrided by children
+  (define (can-eat? an-organism a-thing)
+    #t
+    )
+  )
+
+;;;
+;;; PERSON
+;;; A character in the game.  The player character is a person.
+;;;
+
+(define-struct (person organism)
+  (;; outfit: a container that holds all clothes a person is wearing
+   outfit
+   )
+  #:methods
+  (define (container-accessible-contents p)
+    (append (container-accessible-contents (person-outfit p))
+            (container-contents p)
+            )
+    )
+  )
+
+;; initialize-person: person -> void
+;; EFFECT: do whatever initializations are necessary for persons.
+(define (initialize-person! p)
+  (initialize-thing! p))
+
+;; new-person: string container -> person
+;; Makes a new person object and initializes it.
+(define (new-person adjectives location)
+  (local [(define person
+            (make-person (string->words adjectives)
+                         '()
+                         location
+                         "I" ;; NOTE: Change 
+                         "a person" ;; NOTE: change
+                         2
+                         (make-container "outfit" '())
+                         ))]
+    (begin (initialize-person! person)
+           person)))
+
+;; This is the global variable that holds the person object representing
+;; the player.  This gets reset by (start-game)
+(define me empty)
+
+
+;;;
 ;;; ADD YOUR TYPES HERE!
 ;;;
 
 (define-struct (food prop)
   (calories for-human? needs-spoon? needs-knife?)
-  #:methods
+  #|  #:methods
   (define (eat food-item eater)
     "fill me in"
     ;;TO DO: Implement checking for spoon and knife in inventory
     ;;To dol l ater
-    #|
+    
     (if (food-for-human? food-item )
         (begin (destroy! food-item)
                (set-person-fullness! eater
@@ -294,8 +338,8 @@
                    (printf "I'm full!"))
                )
         )
-|#
     )
+|#
   )
 
 (define (new-food description examine-text location calories for-human? needs-spoon? needs-knife?)
@@ -348,7 +392,7 @@
         (printf "You aren't wearing ~A.~%"
                 (description item)
                 )
-     )
+        )
     )
   )
 ;; new-clothing: string string container symbol number -> clothing
@@ -360,12 +404,65 @@
           (define item (make-clothing adjectives '() location noun examine-text type warmth))]
     (begin (initialize-thing! item)
            item
-      )
+           )
     )
   )
 
-
-
+;;;
+;;; Animal
+;;; An animal in the game that can be pet and fed 
+;;;
+(define-struct (animal organism)
+  (friendliness)
+  #:methods
+  (define (pet an-animal)
+    (begin (set-animal-friendliness! an-animal
+                                     (* 2
+                                        (+ 1 (animal-friendliness an-animal))
+                                        )
+                                     )
+           (if (< (animal-friendliness an-animal)
+                  -10
+                  )
+               (begin (destroy! an-animal)
+                      (printf "The ~A ran away.~%"
+                              (noun an-animal)
+                              )
+                      )
+               (cond [(positive? (animal-friendliness an-animal))
+                      (printf "The ~A seems to like you.~%"
+                              (noun an-animal)
+                              )
+                      ]
+                     [(negative? (animal-friendliness an-animal))
+                      (printf "The ~A seems to not like you.~%"
+                              (noun an-animal)
+                              )
+                      ]
+                     [else 
+                      (printf "The ~A seems ambivalent to you.~%"
+                              (noun an-animal)
+                              )
+                      ]
+                     )
+               )
+           )
+    )
+  )
+;; new-animal:
+;; creates and initializes a new animal with random hunger and friendliness in [-5, 5]
+(define (new-animal description examine-text location)
+  (local [(define words (string->words description))
+          (define adjectives (drop-right words 1))
+          (define noun (last words))
+          (define my-hunger (- 5 (random 11)))
+          (define my-friendliness (- 5 (random 11)))
+          (define an-animal (make-animal adjectives '() location noun examine-text my-hunger my-friendliness))]
+    (begin (initialize-thing! an-animal)
+           an-animal
+           )
+    )
+  )
 
 
 ;;;
@@ -467,6 +564,8 @@
            (new-clothing "red shirt" "It's an old red shirt, seems thins" starting-room 'shirt 0)
            (new-clothing "brown sweater" "It's giving dark academia" starting-room 'shirt 20)
            (new-clothing "jeans" "just some regular jeans" starting-room 'pants 10)
+
+           (new-animal "black fluffy cat" "it's a spooky cat" starting-room)
            
            (check-containers!)
            (void))))
