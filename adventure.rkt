@@ -208,7 +208,11 @@
 ;;;
 
 (define-struct (person thing)
-  (fullness))
+  (fullness
+   ;; outfit: a container that holds all clothes a person is wearing
+   outfit
+   )
+  )
 
 ;; initialize-person: person -> void
 ;; EFFECT: do whatever initializations are necessary for persons.
@@ -221,7 +225,10 @@
   (local [(define person
             (make-person (string->words adjectives)
                          '()
-                         location))]
+                         location
+                         0
+                         (make-container "outfit" '())
+                         ))]
     (begin (initialize-person! person)
            person)))
 
@@ -268,10 +275,10 @@
   (calories for-human? needs-spoon? needs-knife?)
   #:methods
   (define (eat food-item eater)
-
-;;TO DO: Implement checking for spoon and knife in inventory
-;;To dol l ater
-    
+    "fill me in"
+    ;;TO DO: Implement checking for spoon and knife in inventory
+    ;;To dol l ater
+    #|
     (if (food-for-human? food-item )
         (begin (destroy! food-item)
                (set-person-fullness! eater
@@ -281,23 +288,58 @@
                    (printf "I'm full!"))
                )
         )
+|#
     )
   )
 
 (define (new-food description examine-text location calories for-human? needs-spoon? needs-knife?)
-    (local [(define words (string->words description))
+  (local [(define words (string->words description))
           (define noun (last words))
           (define adjectives (drop-right words 1))
           (define food (make-food adjectives '() location noun examine-text calories for-human? needs-spoon? needs-knife?))]
-    (begin (initialize-thing! prop)
-           prop)))
+    (begin (initialize-thing! food)
+           food)))
   
                
                
                
-    
-   
+;;;
+;;; Clothing
+;;; Clothes that can be taken on and off
+;;;
+(define-struct (clothing prop)
+  (;; kind: symbol
+   ;; symbol representing what type of clothing the item is (values: hat, shirt, pants, shoes, gloves, jacket)
+   kind
+   ;; warmth
+   ;; number representing a how "warm" an item is (ie. warmth = 20 represents an item that makes you feel 20 degrees warmer)
+   warmth
+   )
+  #:methods
+  ;; don: clothing -> void
+  ;; Puts on a clothing item
+  ;; EFFECT: 
+  (define (don new-item)
+    (if (ormap (λ (current-item)
+                 (symbol=? (clothing-kind new-item) (clothing-kind current-item))
+                 )
+               (my-outfit)
+               )
+        (printf "You are already wearing a ~A.~%"
+                (symbol->string (clothing-kind new-item))
+                )
+        (move! new-item (person-outfit me))
+        )
+    )
+  ;; doff: clothing -> void
+  ;; Takes off a clothing item 
+  ;; EFFECT: updates 
+  (define (doff item)
+    "fill me in"
+    )
+  )
 
+;; new-clothing
 
 
 
@@ -373,10 +415,26 @@
 ;;;
 ;;; ADD YOUR COMMANDS HERE!
 ;;;
+(define (outfit)
+  (if (empty? (my-outfit))
+      (printf "You aren't wearing anything.~%")
+      (begin (printf "You are wearing:~%")
+             (for-each print-description (my-outfit))
+             )
+      )
+  )
+(define-user-command (outfit)
+  "Prints the things you are wearing")
+
+(define-user-command (don clothing-item)
+  "Puts on the clothing-item, unless you are already wearing something there")
 
 ;;;
 ;;; THE GAME WORLD - FILL ME IN
 ;;;
+
+
+(define hat (make-clothing '("hatlike") '() empty "hat" "test hat" 'hat 10))
 
 ;; start-game: -> void
 ;; Recreate the player object and all the rooms and things.
@@ -387,6 +445,8 @@
            ;; Add join commands to connect your rooms with doors
 
            ;; Add code here to add things to your rooms
+           (set-thing-location! hat starting-room)
+           (initialize-thing! hat)
            
            (check-containers!)
            (void))))
@@ -422,6 +482,12 @@
 ;; List of things in the player's pockets.
 (define (my-inventory)
   (container-accessible-contents me))
+
+;; my-outfit: -> (listof clothing)
+;; List of clothing that the player is wearing
+(define (my-outfit)
+  (container-accessible-contents (person-outfit me))
+  )
 
 ;; accessible-objects -> (listof thing)
 ;; All the objects that should be searched by find and the.
