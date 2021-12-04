@@ -324,7 +324,7 @@
   #:methods
   ;; don: clothing -> void
   ;; Puts on a clothing item
-  ;; EFFECT: 
+  ;; EFFECT: add item to player's outfit if slot is open
   (define (don new-item)
     (if (ormap (λ (current-item)
                  (symbol=? (clothing-kind new-item) (clothing-kind current-item))
@@ -339,7 +339,7 @@
     )
   ;; doff: clothing -> void
   ;; Takes off a clothing item 
-  ;; EFFECT: updates 
+  ;; EFFECT: removes item from player's outfit if wearing
   (define (doff item)
     (if (member item
                 (my-outfit)
@@ -349,11 +349,10 @@
                 (description item)
                 )
      )
-    ;;(move! item (here))
     )
   )
-
-;; new-clothing
+;; new-clothing: string string container symbol number -> clothing
+;; creates and initializes a new clothing object
 (define (new-clothing description examine-text location type warmth)
   (local [(define words (string->words description))
           (define noun (last words))
