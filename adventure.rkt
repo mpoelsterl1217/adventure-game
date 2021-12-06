@@ -269,13 +269,13 @@
   #:methods
   (define (eat food-item eater)
 
-;;TO DO: Implement checking for spoon and knife in inventory
-;;To dol l ater
+    ;;TO DO: Implement checking for spoon and knife in inventory
+    ;;To dol l ater
     
     (if (food-for-human? food-item )
         (begin (destroy! food-item)
                (set-person-fullness! eater
-                                    (+ (person-fullness eater) 1))
+                                     (+ (person-fullness eater) 1))
                (if (< (person-fullness eater) 2)
                    (printf "I'm still hungry!")
                    (printf "I'm full!"))
@@ -285,7 +285,7 @@
   )
 
 (define (new-food description examine-text location calories for-human? needs-spoon? needs-knife?)
-    (local [(define words (string->words description))
+  (local [(define words (string->words description))
           (define noun (last words))
           (define adjectives (drop-right words 1))
           (define food (make-food adjectives '() location noun examine-text calories for-human? needs-spoon? needs-knife?))]
@@ -294,9 +294,52 @@
   
                
                
-               
+
+(define-struct (bag prop)
+  (openZip?)
+
+  #:methods
+ 
+  (define (zipOpen-bag b)
+    (set-bag-openZip?! b true))
+  
+  (define (zipClose-bag b)
+    (set-bag-openZip?! b false))
+
+   (define (putIn-bag b thing)
+        (if (bag-openZip? b)
+            (set-bag-contents! b
+                             (cons thing
+                                   (bag-contents b)))))
+  (define (takeOut-bag b thing)
+    (if (bag-openZip? b)
+        (set-bag-contents! b
+                             (remove thing
+                                     (bag-contents container)))))
+  )
+  
+
+(define-struct (phone prop)
+  (temperature time weather)
+  #:methods
+  (define (check-temperature p)
+    (phone-temperature p)
+    )
+  (define (check-time p)
+    (phone-time p))
+  (define (check-weather p)
+    (phone-weather p)))
+
     
-   
+(define (new-phone description examine-text location temperature time weather)
+  (local [(define the-phone (make-phone (string->words adjectives)
+                                      '() location
+                                      false
+                                      true
+                                      
+                                      "9:00"))]
+    (begin (initialize-thing! prop)
+           prop)))
 
 
 
