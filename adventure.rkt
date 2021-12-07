@@ -292,11 +292,18 @@
             (container-contents p)
             )
     )
-  (define (can-eat? an-org a-thing)
+  (define (can-eat? a-person a-thing)
     (if (food? a-thing)
         (if (food-for-human? a-thing)
-            #t
-            #f ;;placeholders for before implementing utensil checks
+            ;; utensil checks:
+            (if (food-needs-spoon? a-thing)
+                #t ;; boolean expression for if spoon in a-person's contents
+                (if (food-needs-knife? a-thing)
+                    #t;; boolean expression for if knife in a-person's contents
+                    #t
+                    )
+             )
+            #f
             )
         #f)
     )
@@ -558,6 +565,9 @@
            ;; Add join commands to connect your rooms with doors
 
            ;; Add code here to add things to your rooms
+           (new-food "big yellow banana" "it's a banana" starting-room 1 #t #f #f)
+           (new-food "bowl of soup" "it's a good soup" starting-room 2 #t #t #f)
+           (new-food "big steak" "it's a steak alright" starting-room 3 #t #f #t)
            
            (check-containers!)
            (void))))
