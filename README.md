@@ -41,8 +41,7 @@ Final Project for CS_111
 1. Additional fields for person:
 	1. outfit 
 2. Additional fields for door:
-	1. locked? -specifies (t/f) if door is loced
-	2. hole - specifies color of hole, used to compare to color of key so that door can be unlocked appropriately
+	1. locked? -specifies (t/f) if door is locked
 
 
 ## Procedures
@@ -54,6 +53,9 @@ Final Project for CS_111
 6. new-bag - creates a new bag object. 
 7. new-phone - creates a new phone object . 
 8. outfit - creates a new food object. 
+
+1. Additional Procedures for Door:
+	1. new-door - creates a new door object.
 
 ## Methods
 1. Methods for organism:
@@ -78,6 +80,7 @@ Final Project for CS_111
 
 1. Additional methods for door:
 	1. unlock - unlocks door
+	2. open - opens the door if it's unlocked ((Doesn't count toward requirement total, added in list for clarity)
 2. Additional methods for person:
 	1. can-eat? - checks if a person has all the items necessary to consume the food item. For example, if the food needs a spoon to be eaten,
 	method checks if a spoon is in the person's contents. 
