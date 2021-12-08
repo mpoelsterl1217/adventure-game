@@ -788,9 +788,6 @@
   (check-time (the phone))
   (take (the "green-key"))
   (inventory)
-  (open (the front door))
-  (unlock (the front door) "green-key")
-  (open (the front door))
   (go (the front door)))
 
 
