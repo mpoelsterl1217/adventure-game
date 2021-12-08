@@ -214,7 +214,7 @@
 ;; join: room string room string
 ;; EFFECT: makes a pair of doors with the specified adjectives
 ;; connecting the specified rooms.
-(define (join! room1 adjectives1 room2 adjectives2)
+(define (join! room1 adjectives1 room2 adjectives2 locked? open?)
   (local [(define r1->r2 (make-door (string->words adjectives1)
                                     '() room1 room2))
           (define r2->r1 (make-door (string->words adjectives2)
@@ -222,6 +222,7 @@
     (begin (initialize-thing! r1->r2)
            (initialize-thing! r2->r1)
            (void))))
+
 
 ;;;
 ;;; PROP
@@ -714,13 +715,16 @@
           (define bedroom (new-room "small cozy bedroom"))
           (define kitchen (new-room "happy kitchen"))
           (define hall (new-room "colorful long hall"))
-          (define outside (new-room "outside"))
+          (define outside (new-room "the outside"))
           ]
     (begin (set! me (new-person "" starting-room "me"))
            ;; Add join commands to connect your rooms with doors
-           (join! bedroom kitchen)
-           (join! kitchen hall)
-           (join! hall outside)
+           (join! bedroom "small cozy bedroom"
+                  kitchen "happy kitchen")
+           (join! kitchen "happy kitchen"
+                  hall "colorful long hall" )
+           (join! hall "colorful long hall"
+                  outside "the outside")
            
            ;; Add code here to add things to your rooms
            ;; Things in bedroom
