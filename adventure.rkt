@@ -324,6 +324,7 @@
                                          #f
                                          )
                                      )
+                                   (container-contents a-person)
                                    )
                            )
                    0
@@ -335,6 +336,7 @@
                                              #f
                                              )
                                          )
+                                       (container-contents a-person)
                                        )
                                )
                        0
@@ -725,14 +727,14 @@
           ]
     (begin (set! me (new-person "" bedroom "me"))
            ;; Add join commands to connect your rooms with doors
-           (join! bedroom "small cozy bedroom"
-                  kitchen "happy kitchen"
+           (join! bedroom "kitchen"
+                  kitchen "bedroom"
                   false)
-           (join! kitchen "happy kitchen"
-                  hall "colorful long hall"
+           (join! kitchen "hall"
+                  hall "kitchen"
                   false)
-           (join! hall "colorful long hall"
-                  outside "the outside"
+           (join! hall "front"
+                  outside "entry"
                   true)
            
            ;; Add code here to add things to your rooms
@@ -760,7 +762,7 @@
            ; bag
            (new-bag "black backpack" "my backpack" hall 3)
            ; animal
-           (new-animal "small black cat" "It's a cat" hall)
+           (new-animal "small black cat" "It's a cat" kitchen)
            ; key
            (new-key "green-key" "Oh look, a green key!" hall "green")
            
@@ -771,25 +773,25 @@
 
 (define-walkthrough win
   (check-temperature (the phone))
-  (don (the clothing))
-  (take (the "blue key"))
+  (take (the phone))
+  (don (the shirt))
+  (take (the key))
   (inventory)
-  (go (the kitchen))
+  (go (the door))
   (take (the spoon))
   (eat (the soup))
-  (feed (the pet (the steak)))
-  (pet (the pet))
+  (feed (the cat) (the steak))
+  (pet (the cat))
   (take (the "red-key"))
   (inventory)
-  (go (the hall))
-  (check (room? (the bag)))
+  (go (the hall door))
   (check-time (the phone))
   (take (the "green-key"))
   (inventory)
-  (open (the door))
-  (unlock (the door) "green-key")
-  (open (the door))
-  (go (the outside)))
+  (open (the front door))
+  (unlock (the front door) "green-key")
+  (open (the front door))
+  (go (the front door)))
 
 
 ;;;
