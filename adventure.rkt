@@ -576,15 +576,15 @@
     (phone-weather p)))
 
 
-(define (new-phone description examine-text location temperature time weather)
+(define (new-phone description examine-text location temperature my-time weather)
   (local [(define the-phone (make-phone (string->words adjectives)
                                         '() location
                                         false
                                         true
 
-                                        "9:00"))]
-    (begin (initialize-thing! prop)
-           prop)))
+                                        my-time))]
+    (begin (initialize-thing! the-phone)
+           the-phone)))
 
 ;;;
 ;;; USER COMMANDS
@@ -906,3 +906,64 @@
     (if (eq? probe #f)
         (member str (description-word-list obj))
         (probe obj))))
+
+;; display-line: object -> void
+;; EFFECT: prints object using display, and then starts a new line.
+(define (display-line what)
+  (begin (display what)
+         (newline)
+         (void)))
+
+;; words->string: (listof string) -> string
+;; Converts a list of one-word strings into a single string,
+;; e.g. '("a" "red" "door") -> "a red door"
+(define (words->string word-list)
+  (string-append (first word-list)
+                 (apply string-append
+                        (map (λ (word)
+                               (string-append " " word))
+                             (rest word-list)))))
+
+;; string->words: string -> (listof string)
+;; Converts a string containing words to a list of the individual
+;; words.  Inverse of words->string.
+(define (string->words string)
+  (string-split string))
+
+;; add-a-or-an: (listof string) -> (listof string)
+;; Prefixes a list of words with "a" or "an", depending
+;; on whether the first word in the list begins with a
+;; vowel.
+(define (add-a-or-an word-list)
+  (local [(define first-word (first word-list))
+          (define first-char (substring first-word 0 1))
+          (define starts-with-vowel? (string-contains? first-char "aeiou"))]
+    (cons (if starts-with-vowel?
+              "an"
+              "a")
+          word-list)))
+
+;;
+;; The following calls are filling in blanks in the other files.
+;; This is needed because this file is in a different langauge than
+;; the others.
+;;
+(set-find-the! find-the)
+(set-find-within! find-within)
+(set-restart-game! (λ () (start-game)))
+(define (game-print object)
+  (cond [(void? object)
+         (void)]
+        [(object? object)
+         (print-description object)]
+        [else (write object)]))
+
+(current-print game-print)
+   
+;;;
+;;; Start it up
+;;;
+
+(start-game)
+(look)
+
