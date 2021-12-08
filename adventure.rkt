@@ -181,16 +181,23 @@
 (define-struct (door thing)
   ;; destination: container
   ;; The place this door leads to
-  (locked? hole destination)
+  (locked? destination)
   
   #:methods
   ;; unlock: door -> destination
   ;; effect: allows player to open and get through the door to destination
-  (define (unlock d color-key)
-    (if (= color-key
-        (door-hole d))
+  (define (unlock d key-color)
+    (if (string=? key-color "green")
         (set-door-locked?! d false)
         (printf "Wrong key")))
+
+(define (new-door adjectives locked? destination location)
+  (local [(define door (make-door (string->words adjectives)
+                                  '() location
+                                  true
+                                  destination))]
+    (begin (initialize-thing! door)
+           door)))
   
   
   ;; go: door -> void
@@ -210,15 +217,6 @@
     (begin (initialize-thing! r1->r2)
            (initialize-thing! r2->r1)
            (void))))
-
-(define (new-door adjectives locked? hole colored-key location)
-  (local [(define door (make-door (string->words adjectives)
-                                      '() location
-                                      false
-                                      true
-                                      colored-key))]
-    (begin (initialize-thing! door)
-           door)))
 
 ;;;
 ;;; PROP
@@ -313,11 +311,12 @@
   (define (can-eat? a-person a-thing)
     (if (food? a-thing)
         (if (food-for-human? a-thing)
-            ;; check utensils (string-contains? utensil (person-contents a-person))
+            (food-needs-utensil? a-thing) 
             (if (food-needs-spoon? a-thing)
-                #t ;; boolean expression for if spoon in a-person's contents
+                (> (length (filter (lambda (n) (is-a? spoon)) (person-contents a-person)) 1))
+                ;; boolean expression for if spoon in a-person's contents
                 (if (food-needs-knife? a-thing)
-                    #t;; boolean expression for if knife in a-person's contents
+                    (> (length (filter (lambda (n) (is-a? knife)) (person-contents a-person)) 1))
                     #t ;; return true if a spoon or knife is not needed
                     )
                 )
@@ -379,16 +378,16 @@
   (kind))
 
 ;;; new-utensil
-  (define (new-utensil description examine-text location kind)
-    (local [(define words (string->words description))
-            (define noun (last words))
-            (define adjectives (drop-right words 1))
-            (define utensil (make-utensil adjectives '() location noun examine-text kind))]
-      (begin (initialize-thing! utensil)
-             utensil
-             )
-      )
+(define (new-utensil description examine-text location kind)
+  (local [(define words (string->words description))
+          (define noun (last words))
+          (define adjectives (drop-right words 1))
+          (define utensil (make-utensil adjectives '() location noun examine-text kind))]
+    (begin (initialize-thing! utensil)
+           utensil
+           )
     )
+  )
 
 ;;; key
 ;;; A colored key needed to open the front door
@@ -396,16 +395,16 @@
   (color))
 
 ;;; new-key
-  (define (new-key description examine-text location color)
-    (local [(define words (string->words description))
-            (define noun (last words))
-            (define adjectives (drop-right words 1))
-            (define key (make-key adjectives '() location noun examine-text color))]
-      (begin (initialize-thing! key)
-             key
-             )
-      )
+(define (new-key description examine-text location color)
+  (local [(define words (string->words description))
+          (define noun (last words))
+          (define adjectives (drop-right words 1))
+          (define key (make-key adjectives '() location noun examine-text color))]
+    (begin (initialize-thing! key)
+           key
+           )
     )
+  )
 
 ;;;
 ;;; Clothing
@@ -533,29 +532,29 @@
   (define (putIn-bag b thing)
     (if (bag-openZip? b)
         (if (< (length(bag-contents b)) (bag-capacity b) )
-               (begin (set-bag-contents! b
-                                         (cons thing
-                                               (bag-contents b)))
-                      (set-bag-capacity! b (+ 1 bag-capacity b)))
-               (printf "Sorry, this bag is full! Empty it before adding something!"))
+            (begin (set-bag-contents! b
+                                      (cons thing
+                                            (bag-contents b)))
+                   (set-bag-capacity! b (+ 1 bag-capacity b)))
+            (printf "Sorry, this bag is full! Empty it before adding something!"))
         (printf "Open the bag first!")
-                ))
+        ))
 
 
-        (define (takeOut-bag b thing)
-          (if (bag-openZip? b)
-              (set-bag-contents! b
-                                 (remove thing
-                                         (bag-contents container)))))
-        )
+  (define (takeOut-bag b thing)
+    (if (bag-openZip? b)
+        (set-bag-contents! b
+                           (remove thing
+                                   (bag-contents container)))))
+  )
 
-    (define (new-bag adjectives location )
-      (local [(define the-bag (make-bag (string->words adjectives)
-                                        '() location
-                                        false
-                                        ))]
-        (begin (initialize-thing! the-bag)
-               the-bag)))
+(define (new-bag adjectives location )
+  (local [(define the-bag (make-bag (string->words adjectives)
+                                    '() location
+                                    false
+                                    ))]
+    (begin (initialize-thing! the-bag)
+           the-bag)))
 
 
 ;;phone
@@ -574,11 +573,11 @@
 
 (define (new-phone description examine-text location temperature time weather)
   (local [(define the-phone (make-phone (string->words adjectives)
-                                      '() location
-                                      false
-                                      true
+                                        '() location
+                                        false
+                                        true
 
-                                      "9:00"))]
+                                        "9:00"))]
     (begin (initialize-thing! prop)
            prop)))
 
@@ -706,18 +705,23 @@
            ; phone
            ; clothes
            ; key
+           (new-prop "blue key" "The blue key!" bedroom)
 
            ;; Things for kitchen
            (new-food "big yellow banana" "it's a banana" kitchen 1 #t #f #f)
            (new-food "bowl of soup" "it's a good soup" kitchen 2 #t #t #f)
            (new-food "big steak" "it's a steak alright" kitchen 3 #t #f #t)
            ; utensils
+           (new-prop "shiny spoon" "a clean spoon!" kitchen)
+           (new-prop "sharp knife" "it's a knife!" kitchen)
+           ;;key
+           (new-prop "red key" "I found the red key!" kitchen)
            
            ;; Things for hall
            ; bag
            (new-animal "small black cat" "It's a cat" hall)
            ; key
-           
+           (new-prop "green-key" "Oh look, a green key!" hall)
          
            
            (check-containers!)
@@ -726,7 +730,7 @@
 ;;;
 ;;; PUT YOUR WALKTHROUGHS HERE
 ;;;
-(define-walkthrough walkthrough
+(define-walkthrough walkthrough)
 
 
 
@@ -873,4 +877,7 @@
   (let* ((str (if (symbol? word)
                   (symbol->string word)
                   word))
-         (probe (
+         (probe (name->type-predicate str)))
+    (if (eq? probe #f)
+        (member str (description-word-list obj))
+        (probe obj))))
