@@ -1,6 +1,7 @@
 # adventure-game
 Final Project for CS_111
-
+## Instructions
+Open "adventure.rkt", run, and explore
 
 
 ## Types
@@ -95,16 +96,15 @@ Who’s in your group?
 
 
 Goals
-Say a few words about what you wanted the game to be like.  Note that if you just wanted to write some code so you could get an good grade on the project, it’s fine to admit that.
+Say a few words about what you wanted the game to be like.  Note that if you just wanted to write some code so you could get a good grade on the project, it’s fine to admit that.
 
-Our goal was to simulate waking up in the morning, going through a typical morning routine, and then leaving for the day. The idea of the game was to successfully leave the house after completing all the necessary tasks like dressing up, engaing with pets, feeding yourself, and putting stuff in your bag. 
+Our goal was to simulate waking up in the morning, going through a typical morning routine, and then leaving for the day. The idea of the game was to successfully leave the house after completing all the necessary tasks like dressing up, engaging with pets, feeding yourself, and putting stuff in your bag. 
 
 
 Lessons learned
 What went right?
 
-- We were able to break our program down into smaller pieces, code those small parts one by one and use inheritance effectively, which taught us
-the benefits of objected-oriented programming. 
+- We were able to break our program down into smaller pieces, code those small parts one by one and use inheritance effectively, which taught us the benefits of objected-oriented programming. 
 
 
 
@@ -124,15 +124,4 @@ What do you wish you knew when you started?
 
 
 
-![image](https://user-images.githubusercontent.com/49349631/145104791-dc7a8384-3f45-499a-b6f3-6255368a90bc.png)
-
-	
-	
-	
-	
-	
-	
-## Additional 
-![image](https://user-images.githubusercontent.com/49349631/144493028-0d2ad644-474c-4333-a4b5-5c10020faf1b.png)
-pacity limit
 

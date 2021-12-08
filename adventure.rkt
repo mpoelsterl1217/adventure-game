@@ -195,15 +195,6 @@
     (if (string=? key-color "green")
         (set-door-locked?! d false)
         (printf "Wrong key")))
-
-  (define (new-door adjectives locked? destination location)
-    (local [(define door (make-door (string->words adjectives)
-                                    '() location
-                                    true
-                                    destination))]
-      (begin (initialize-thing! door)
-             door)))
-  
   
   ;; go: door -> void
   ;; EFFECT: Moves the player to the door's location and (look)s around.
@@ -211,6 +202,14 @@
     (begin (move! me (door-destination door))
            (look))))
 
+(define (new-door adjectives locked? destination location)
+  (local [(define door (make-door (string->words adjectives)
+                                  '() location
+                                  true
+                                  destination))]
+    (begin (initialize-thing! door)
+           door)))
+  
 ;; join: room string room string
 ;; EFFECT: makes a pair of doors with the specified adjectives
 ;; connecting the specified rooms.
@@ -558,8 +557,8 @@
     (if (bag-openZip? b)
         (if (< (length(container-contents b)) (bag-capacity b) )
             (begin (set-container-contents! b
-                                      (cons thing
-                                            (container-contents b)))
+                                            (cons thing
+                                                  (container-contents b)))
                    (set-bag-capacity! b (+ 1 bag-capacity b)))
             (printf "Sorry, this bag is full! Empty it before adding something!"))
         (printf "Open the bag first!")
@@ -569,10 +568,10 @@
   (define (takeOut-bag b thing)
     (if (bag-openZip? b)
         (set-container-contents! b
-                           (remove! thing
-                                   (container-contents b)))
-    #f)
-  ))
+                                 (remove! thing
+                                          (container-contents b)))
+        #f)
+    ))
 
 (define (new-bag description examine-text location capacity)
   (local [(define words (string->words description))
