@@ -730,7 +730,7 @@
            (new-clothing "hat" "Look, my winter hat" bedroom)
            (new-clothing "shirt" "my favorite shirt" bedroom)
            ; key
-           (new-key "key-blue" "The blue key!" bedroom)
+           (new-key "blue-key" "The blue key!" bedroom)
 
            ;; Things for kitchen
            (new-food "big yellow banana" "it's a banana" kitchen 1 #t #f #f)
@@ -740,7 +740,7 @@
            (new-utensil "shiny spoon" "a clean spoon!" kitchen)
            (new-utensil "sharp knife" "it's a knife!" kitchen)
            ;;key
-           (new-key "key-red" "I found the red key!" kitchen)
+           (new-key "red-key" "I found the red key!" kitchen)
            
            ;; Things for hall
            ; bag
@@ -748,7 +748,7 @@
            ; animal
            (new-animal "small black cat" "It's a cat" hall)
            ; key
-           (new-key "key-green" "Oh look, a green key!" hall)
+           (new-key "green-key" "Oh look, a green key!" hall)
            
            (check-containers!)
            (void))))
@@ -757,23 +757,24 @@
 ;;; PUT YOUR WALKTHROUGHS HERE
 
 (define-walkthrough win
-  (check (the phone) temperature)
+  (check-temperature (the phone))
   (don (the clothing))
-  (take  (the key-blue))
+  (take (the "blue key"))
   (inventory)
   (go (the kitchen))
   (take (the spoon))
-  (feed (me soup))
-  (feed (pet steak))
+  (eat (the soup))
+  (feed (the pet (the steak)))
   (pet (the pet))
-  (take (the key-red))
+  (take (the "red-key"))
   (inventory)
   (go (the hall))
-  (check (room? (prop-locatoin (the bag))))
-  (check (the phone) time)
-  (take (the key-green))
+  (check (room? (the bag)))
+  (check-time (the phone))
+  (take (the "green-key"))
+  (inventory)
   (open (the door))
-  (unlock (the door) key-green)
+  (unlock (the door) "green-key")
   (open (the door))
   (go (the outside)))
 
