@@ -184,7 +184,7 @@
   (locked? open? destination)
   
   #:methods
- (define (open d)
+  (define (open d)
     (if (door-locked? d)
         (printf "The door is locked.")
         (set-door-open?! d true)))
@@ -196,13 +196,13 @@
         (set-door-locked?! d false)
         (printf "Wrong key")))
 
-(define (new-door adjectives locked? destination location)
-  (local [(define door (make-door (string->words adjectives)
-                                  '() location
-                                  true
-                                  destination))]
-    (begin (initialize-thing! door)
-           door)))
+  (define (new-door adjectives locked? destination location)
+    (local [(define door (make-door (string->words adjectives)
+                                    '() location
+                                    true
+                                    destination))]
+      (begin (initialize-thing! door)
+             door)))
   
   
   ;; go: door -> void
@@ -317,18 +317,34 @@
     (if (food? a-thing)
         (if (food-for-human? a-thing)
             (if (food-needs-spoon? a-thing)
-                (filter (lambda (n)
-                                     "spoon")
-                                   (container-contents a-person))
+                (> (length (filter (λ (item)
+                                     (if (is-a? item 'utensil)
+                                         (symbol=? (utensil-kind item) 'spoon)
+                                         #f
+                                         )
+                                     )
+                                   )
+                           )
+                   0
+                   )
                 (if (food-needs-knife? a-thing)
-                     (filter (lambda (n)
-                                         "knife")
-                                       (container-contents a-person))
+                    (> (length (filter (λ (item)
+                                         (if (is-a? item 'utensil)
+                                             (symbol=? (utensil-kind item) 'knife)
+                                             #f
+                                             )
+                                         )
+                                       )
+                               )
+                       0
+                       )
+                    #t
+                    )
                 )
             #f
             )
-        #f)
-    )
+        #f
+        )
     ))
 
 ;; initialize-person: person -> void
