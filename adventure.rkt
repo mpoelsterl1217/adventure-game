@@ -184,6 +184,11 @@
   (locked? destination)
   
   #:methods
+ (define (open d)
+    (if (door-locked? d)
+        (printf "The door is locked.")
+        (set-door-open?! s true)))
+
   ;; unlock: door -> destination
   ;; effect: allows player to open and get through the door to destination
   (define (unlock d key-color)
@@ -668,7 +673,7 @@
   (feed me a-thing)
   )
 
-(define-user-command (unlock door color-key)
+(define-user-command (unlock door key-color)
   "Try to unlock the door using the special colored-key")
 
 ;;;
@@ -703,36 +708,56 @@
            ;; Add code here to add things to your rooms
            ;; Things in bedroom
            ; phone
+           (new-phone "new phone" "my cool new phone" bedroom)
            ; clothes
+           (new-clothing "hat" "Look, my winter hat" bedroom)
+           (new-clothing "shirt" "my favorite shirt" bedroom)
            ; key
-           (new-prop "blue key" "The blue key!" bedroom)
+           (new-key "blue-key" "The blue key!" bedroom)
 
            ;; Things for kitchen
            (new-food "big yellow banana" "it's a banana" kitchen 1 #t #f #f)
            (new-food "bowl of soup" "it's a good soup" kitchen 2 #t #t #f)
            (new-food "big steak" "it's a steak alright" kitchen 3 #t #f #t)
            ; utensils
-           (new-prop "shiny spoon" "a clean spoon!" kitchen)
-           (new-prop "sharp knife" "it's a knife!" kitchen)
+           (new-utensil "shiny spoon" "a clean spoon!" kitchen)
+           (new-utensil "sharp knife" "it's a knife!" kitchen)
            ;;key
-           (new-prop "red key" "I found the red key!" kitchen)
+           (new-key "red-key" "I found the red key!" kitchen)
            
            ;; Things for hall
            ; bag
+           (new-bag "my backpack" "I found my backpack" hall)
+           ; animal
            (new-animal "small black cat" "It's a cat" hall)
            ; key
-           (new-prop "green-key" "Oh look, a green key!" hall)
-         
+           (new-key "green-key" "Oh look, a green key!" hall)
            
            (check-containers!)
            (void))))
 
-;;;
+
 ;;; PUT YOUR WALKTHROUGHS HERE
-;;;
-(define-walkthrough walkthrough)
 
-
+(define-walkthrough win
+  (check (the phone) temperature)
+  (don (the clothing))
+  (take  (the blue-key))
+  (inventory)
+  (go (the kitchen))
+  (take (the shiny spoon))
+  (feed (me soup))
+  (feed (pet steak))
+  (pet (the pet))
+  (take (the red-key))
+  (inventory)
+  (go (the hall))
+  (check (room? (prop-locatoin (the bag))))
+  (check (the phone) time)
+  (take (the green-key))
+  (open (the door))
+  (unlock (the door) green-key)
+  (go (the outside)))
 
 
 ;;;
