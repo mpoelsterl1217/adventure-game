@@ -542,7 +542,7 @@
 
 ;;bag
 (define-struct (bag prop)
-  (openZip? capacity contents)
+  (openZip? capacity)
 
   #:methods
 
@@ -554,10 +554,10 @@
 
   (define (putIn-bag b thing)
     (if (bag-openZip? b)
-        (if (< (length(bag-contents b)) (bag-capacity b) )
-            (begin (set-bag-contents! b
+        (if (< (length(container-contents b)) (bag-capacity b) )
+            (begin (set-container-contents! b
                                       (cons thing
-                                            (bag-contents b)))
+                                            (container-contents b)))
                    (set-bag-capacity! b (+ 1 bag-capacity b)))
             (printf "Sorry, this bag is full! Empty it before adding something!"))
         (printf "Open the bag first!")
@@ -566,16 +566,17 @@
 
   (define (takeOut-bag b thing)
     (if (bag-openZip? b)
-        (set-bag-contents! b
+        (set-container-contents! b
                            (remove! thing
-                                   (bag-contents b)))
+                                   (container-contents b)))
     #f)
   ))
 
-(define (new-bag adjectives location)
-  (local [(define the-bag (make-bag (string->words adjectives)
-                                    '() location
-                                    false
+(define (new-bag description examine-text location capacity)
+  (local [(define words (string->words description))
+          (define noun (last words))
+          (define adjectives (drop-right words 1))
+          (define the-bag (make-bag adjectives '() location noun examine-text false capacity
                                     ))]
     (begin (initialize-thing! the-bag)
            the-bag)))
@@ -595,12 +596,18 @@
     (phone-weather p)))
 
 
-(define (new-phone adjectives description examine-text location temperature my-time weather)
-  (local [(define the-phone (make-phone (string->words adjectives)
-                                        '() location
-                                        false
-                                        true
-                                        my-time))]
+(define (new-phone description examine-text location temperature my-time weather)
+  (local [(define words (string->words description))
+          (define noun (last words))
+          (define adjectives (drop-right words 1))
+          (define the-phone (make-phone adjectives
+                                        '()
+                                        location
+                                        noun
+                                        examine-text
+                                        temperature
+                                        my-time
+                                        weather))]
     (begin (initialize-thing! the-phone)
            the-phone)))
 
@@ -732,31 +739,31 @@
            ;; Add code here to add things to your rooms
            ;; Things in bedroom
            ; phone
-           (new-phone "new phone" "my cool new phone" bedroom)
+           (new-phone "new phone" "my cool new phone" bedroom 30 "9:00am" "cloudy")
            
            ; clothes
-           (new-clothing "hat" "Look, my winter hat" bedroom)
-           (new-clothing "shirt" "my favorite shirt" bedroom)
+           (new-clothing "hat" "Look, my winter hat" bedroom 'hat 15)
+           (new-clothing "shirt" "my favorite shirt" bedroom 'shirt 10)
            ; key
-           (new-key "blue-key" "The blue key!" bedroom)
+           (new-key "blue-key" "The blue key!" bedroom "blue")
 
            ;; Things for kitchen
            (new-food "big yellow banana" "it's a banana" kitchen 1 #t #f #f)
            (new-food "bowl of soup" "it's a good soup" kitchen 2 #t #t #f)
            (new-food "big steak" "it's a steak alright" kitchen 3 #t #f #t)
            ; utensils
-           (new-utensil "shiny spoon" "a clean spoon!" kitchen)
-           (new-utensil "sharp knife" "it's a knife!" kitchen)
+           (new-utensil "shiny spoon" "a clean spoon!" kitchen 'spoon)
+           (new-utensil "sharp knife" "it's a knife!" kitchen 'knife)
            ;;key
-           (new-key "red-key" "I found the red key!" kitchen)
+           (new-key "red-key" "I found the red key!" kitchen "red")
            
            ;; Things for hall
            ; bag
-           (new-bag "my backpack" "I found my backpack" hall)
+           (new-bag "black backpack" "my backpack" hall 3)
            ; animal
            (new-animal "small black cat" "It's a cat" hall)
            ; key
-           (new-key "green-key" "Oh look, a green key!" hall)
+           (new-key "green-key" "Oh look, a green key!" hall "green")
            
            (check-containers!)
            (void))))
