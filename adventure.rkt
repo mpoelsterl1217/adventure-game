@@ -720,16 +720,20 @@
     (begin (set! me (new-person "" starting-room "me"))
            ;; Add join commands to connect your rooms with doors
            (join! bedroom "small cozy bedroom"
-                  kitchen "happy kitchen")
+                  kitchen "happy kitchen"
+                  false)
            (join! kitchen "happy kitchen"
-                  hall "colorful long hall" )
+                  hall "colorful long hall"
+                  false)
            (join! hall "colorful long hall"
-                  outside "the outside")
+                  outside "the outside"
+                  true)
            
            ;; Add code here to add things to your rooms
            ;; Things in bedroom
            ; phone
            (new-phone "new phone" "my cool new phone" bedroom)
+           
            ; clothes
            (new-clothing "hat" "Look, my winter hat" bedroom)
            (new-clothing "shirt" "my favorite shirt" bedroom)
@@ -756,7 +760,6 @@
            
            (check-containers!)
            (void))))
-
 
 ;;; PUT YOUR WALKTHROUGHS HERE
 
