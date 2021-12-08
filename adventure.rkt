@@ -187,7 +187,7 @@
  (define (open d)
     (if (door-locked? d)
         (printf "The door is locked.")
-        (set-door-open?! s true)))
+        (set-door-open?! d true)))
 
   ;; unlock: door -> destination
   ;; effect: allows player to open and get through the door to destination
@@ -713,7 +713,7 @@
            (new-clothing "hat" "Look, my winter hat" bedroom)
            (new-clothing "shirt" "my favorite shirt" bedroom)
            ; key
-           (new-key "blue-key" "The blue key!" bedroom)
+           (new-key "key-blue" "The blue key!" bedroom)
 
            ;; Things for kitchen
            (new-food "big yellow banana" "it's a banana" kitchen 1 #t #f #f)
@@ -723,7 +723,7 @@
            (new-utensil "shiny spoon" "a clean spoon!" kitchen)
            (new-utensil "sharp knife" "it's a knife!" kitchen)
            ;;key
-           (new-key "red-key" "I found the red key!" kitchen)
+           (new-key "key-red" "I found the red key!" kitchen)
            
            ;; Things for hall
            ; bag
@@ -731,7 +731,7 @@
            ; animal
            (new-animal "small black cat" "It's a cat" hall)
            ; key
-           (new-key "green-key" "Oh look, a green key!" hall)
+           (new-key "key-green" "Oh look, a green key!" hall)
            
            (check-containers!)
            (void))))
@@ -742,21 +742,21 @@
 (define-walkthrough win
   (check (the phone) temperature)
   (don (the clothing))
-  (take  (the blue-key))
+  (take  (the key-blue))
   (inventory)
   (go (the kitchen))
   (take (the shiny spoon))
   (feed (me soup))
   (feed (pet steak))
   (pet (the pet))
-  (take (the red-key))
+  (take (the key-red))
   (inventory)
   (go (the hall))
   (check (room? (prop-locatoin (the bag))))
   (check (the phone) time)
-  (take (the green-key))
+  (take (the key-green))
   (open (the door))
-  (unlock (the door) green-key)
+  (unlock (the door) key-green)
   (go (the outside)))
 
 
