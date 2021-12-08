@@ -316,20 +316,20 @@
   (define (can-eat? a-person a-thing)
     (if (food? a-thing)
         (if (food-for-human? a-thing)
-            (food-needs-utensil? a-thing) 
             (if (food-needs-spoon? a-thing)
-                (> (length (filter (lambda (n) (is-a? spoon)) (person-contents a-person)) 1))
-                ;; boolean expression for if spoon in a-person's contents
+                (filter (lambda (n)
+                                     "spoon")
+                                   (container-contents a-person))
                 (if (food-needs-knife? a-thing)
-                    (> (length (filter (lambda (n) (is-a? knife)) (person-contents a-person)) 1))
-                    #t ;; return true if a spoon or knife is not needed
-                    )
+                     (filter (lambda (n)
+                                         "knife")
+                                       (container-contents a-person))
                 )
             #f
             )
         #f)
     )
-  )
+    ))
 
 ;; initialize-person: person -> void
 ;; EFFECT: do whatever initializations are necessary for persons.
@@ -393,6 +393,7 @@
            )
     )
   )
+
 
 ;;; key
 ;;; A colored key needed to open the front door
@@ -745,7 +746,7 @@
   (take  (the key-blue))
   (inventory)
   (go (the kitchen))
-  (take (the shiny spoon))
+  (take (the spoon))
   (feed (me soup))
   (feed (pet steak))
   (pet (the pet))
