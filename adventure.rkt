@@ -541,7 +541,7 @@
 
 ;;bag
 (define-struct (bag prop)
-  (openZip? capacity)
+  (openZip? capacity contents)
 
   #:methods
 
@@ -566,11 +566,12 @@
   (define (takeOut-bag b thing)
     (if (bag-openZip? b)
         (set-bag-contents! b
-                           (remove thing
-                                   (bag-contents container)))))
-  )
+                           (remove! thing
+                                   (bag-contents b)))
+    #f)
+  ))
 
-(define (new-bag adjectives location )
+(define (new-bag adjectives location)
   (local [(define the-bag (make-bag (string->words adjectives)
                                     '() location
                                     false
@@ -593,12 +594,11 @@
     (phone-weather p)))
 
 
-(define (new-phone description examine-text location temperature my-time weather)
+(define (new-phone adjectives description examine-text location temperature my-time weather)
   (local [(define the-phone (make-phone (string->words adjectives)
                                         '() location
                                         false
                                         true
-
                                         my-time))]
     (begin (initialize-thing! the-phone)
            the-phone)))
