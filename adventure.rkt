@@ -214,11 +214,11 @@
 ;; join: room string room string
 ;; EFFECT: makes a pair of doors with the specified adjectives
 ;; connecting the specified rooms.
-(define (join! room1 adjectives1 room2 adjectives2 locked? open?)
+(define (join! room1 adjectives1 room2 adjectives2 locked?)
   (local [(define r1->r2 (make-door (string->words adjectives1)
-                                    '() room1 room2))
+                                    '() room1 locked? #f room2))
           (define r2->r1 (make-door (string->words adjectives2)
-                                    '() room2 room1))]
+                                    '() room2 locked? #f room1))]
     (begin (initialize-thing! r1->r2)
            (initialize-thing! r2->r1)
            (void))))
