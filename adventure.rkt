@@ -181,7 +181,7 @@
 (define-struct (door thing)
   ;; destination: container
   ;; The place this door leads to
-  (locked? destination)
+  (locked? open? destination)
   
   #:methods
  (define (open d)
@@ -757,6 +757,7 @@
   (take (the key-green))
   (open (the door))
   (unlock (the door) key-green)
+  (open (the door))
   (go (the outside)))
 
 

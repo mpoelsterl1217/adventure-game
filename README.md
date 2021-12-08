@@ -42,6 +42,7 @@ Final Project for CS_111
 	1. outfit 
 2. Additional fields for door:
 	1. locked? -specifies (t/f) if door is locked
+	2. open? - Specifies (t/f) if door can be opened
 
 
 ## Procedures
