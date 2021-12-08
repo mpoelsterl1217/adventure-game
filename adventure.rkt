@@ -718,13 +718,12 @@
 ;; Recreate the player object and all the rooms and things.
 (define (start-game)
   ;; Fill this in with the rooms you want
-  (local [(define starting-room (new-room ""))
-          (define bedroom (new-room "small cozy bedroom"))
+  (local [(define bedroom (new-room "small cozy bedroom"))
           (define kitchen (new-room "happy kitchen"))
           (define hall (new-room "colorful long hall"))
           (define outside (new-room "the outside"))
           ]
-    (begin (set! me (new-person "" starting-room "me"))
+    (begin (set! me (new-person "" bedroom "me"))
            ;; Add join commands to connect your rooms with doors
            (join! bedroom "small cozy bedroom"
                   kitchen "happy kitchen"
